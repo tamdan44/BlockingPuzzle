@@ -1,6 +1,4 @@
-using Unity.Mathematics;
 using UnityEngine;
-using UnityEngine.UI;
 
 [CreateAssetMenu]
 [System.Serializable]
@@ -17,7 +15,7 @@ public class ShapeData : ScriptableObject
             CreateRow(size);
         }
 
-        public void CreateRow(int size)
+        public void CreateRow(int size) //create new bool array and set to false
         {
             _size = size;
             column = new bool[_size];
@@ -49,7 +47,7 @@ public class ShapeData : ScriptableObject
     {
         board = new Row[rows];
         
-        for (var i = 0; i<rows; i++)
+        for (var i = 0; i < rows; i++)
         {
             board[i] = new Row(columns);
         }

@@ -20,7 +20,8 @@ public class Score : MonoBehaviour
         GameEvents.AddScore -= AddScore;
     }
 
-    void AddScore(int score){
+    void AddScore(int score)
+    {
         currentScore += score;
         UpdateScore();
     }

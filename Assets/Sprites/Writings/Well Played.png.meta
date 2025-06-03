@@ -235,7 +235,11 @@ TextureImporter:
     secondaryTextures: []
     spriteCustomMetadata:
       entries: []
-    nameFileIdTable: {}
+    nameFileIdTable:
+      Well Played_0: 1409015838280294317
+      Well Played_1: -6299868717384782876
+      Well Played_2: -444030253184450365
+      Well Played_3: -6756296789862403066
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

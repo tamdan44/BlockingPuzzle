@@ -529,6 +529,10 @@ PrefabInstance:
     m_TransformParent: {fileID: 1693383558}
     m_Modifications:
     - target: {fileID: 933922469500742224, guid: d95ea82b8729c6741bf34a933688b273, type: 3}
+      propertyPath: store
+      value: 
+      objectReference: {fileID: 1491088218}
+    - target: {fileID: 933922469500742224, guid: d95ea82b8729c6741bf34a933688b273, type: 3}
       propertyPath: currentShapeData
       value: 
       objectReference: {fileID: 11400000, guid: 73799150e3994124f84d401a8e363f4b, type: 2}
@@ -1135,6 +1139,10 @@ PrefabInstance:
     m_TransformParent: {fileID: 1693383558}
     m_Modifications:
     - target: {fileID: 933922469500742224, guid: d95ea82b8729c6741bf34a933688b273, type: 3}
+      propertyPath: store
+      value: 
+      objectReference: {fileID: 1491088218}
+    - target: {fileID: 933922469500742224, guid: d95ea82b8729c6741bf34a933688b273, type: 3}
       propertyPath: currentShapeData
       value: 
       objectReference: {fileID: 11400000, guid: 73799150e3994124f84d401a8e363f4b, type: 2}
@@ -1311,11 +1319,12 @@ MonoBehaviour:
   shapeStorage: {fileID: 1491088218}
   columns: 9
   rows: 9
-  squaresGap: 3
   gridSquare: {fileID: 549689612287776073, guid: 0260bffd86a863d46827228ad7d44dd8, type: 3}
   startPosition: {x: -430, y: 442}
   squareScale: 0.9
   everySquareOffset: 0.5
+  squaresGap: 3
+  Revert: []
 --- !u!114 &1373806252
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1453,7 +1462,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   shapeDataList:
-  - {fileID: 11400000, guid: d767def1d2fa56241a1184bfa23a62ca, type: 2}
   - {fileID: 11400000, guid: 8c085b8125b703445b63b01272b5d653, type: 2}
   - {fileID: 11400000, guid: ae26003bb74bd7648b6cfe803a1624cd, type: 2}
   - {fileID: 11400000, guid: bf36e3c9df5affe4aa3a65ef8e03e32f, type: 2}
@@ -1461,12 +1469,14 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 13138a32fb46b6d4e8152276804978c9, type: 2}
   - {fileID: 11400000, guid: 13d27fa0028a4a24098c85141dde17a2, type: 2}
   - {fileID: 11400000, guid: 73799150e3994124f84d401a8e363f4b, type: 2}
+  - {fileID: 11400000, guid: d767def1d2fa56241a1184bfa23a62ca, type: 2}
   - {fileID: 11400000, guid: a3588e92e20af1c4ab2fb42b9081aad3, type: 2}
   - {fileID: 11400000, guid: 5e6a935013fb9b847b9642b23b804c31, type: 2}
   shapeList:
   - {fileID: 1345363764}
   - {fileID: 527973341}
   - {fileID: 1296004717}
+  revertData: 0
 --- !u!1 &1547361986
 GameObject:
   m_ObjectHideFlags: 0
@@ -1994,6 +2004,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 1693383558}
     m_Modifications:
+    - target: {fileID: 933922469500742224, guid: d95ea82b8729c6741bf34a933688b273, type: 3}
+      propertyPath: store
+      value: 
+      objectReference: {fileID: 1491088218}
     - target: {fileID: 933922469500742224, guid: d95ea82b8729c6741bf34a933688b273, type: 3}
       propertyPath: currentShapeData
       value: 

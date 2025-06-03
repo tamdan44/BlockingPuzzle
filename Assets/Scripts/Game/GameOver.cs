@@ -22,9 +22,11 @@ public class GameOver : MonoBehaviour
 
     void GameOverPopup(bool highScore){
         gameOverPopup.SetActive(true);
-        if(highScore){
+        if (highScore)
+        {
             highScoreText.SetActive(true);
-        } else{
+        } else
+        {
             gameOverText.SetActive(true);
         }
     }

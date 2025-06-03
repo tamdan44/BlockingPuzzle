@@ -1,5 +1,5 @@
-using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class ShapeStorage : MonoBehaviour
@@ -20,15 +20,13 @@ public class ShapeStorage : MonoBehaviour
     {
         GameEvents.RequestNewShapes -= RequestNewShapes;
     }
-
     public void RequestNewShapes()
     {
         foreach (Shape shape in shapeList)
         {
-            int shapeIndex = UnityEngine.Random.Range(0, shapeDataList.Count);
+            int shapeIndex = Random.Range(0, shapeDataList.Count);
             shape.RequestNewShape(shapeDataList[shapeIndex]);
         }
-
     }
 
     public Shape GetCurrentSelectedShape()

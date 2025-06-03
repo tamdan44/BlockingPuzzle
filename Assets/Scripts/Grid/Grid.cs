@@ -1,24 +1,20 @@
-using System;
-using System.Collections;
 using System.Collections.Generic;
-using Unity.Mathematics;
 using UnityEngine;
-using UnityEngine.Scripting.APIUpdating;
-
+using UnityEngine.EventSystems;
 public class Grid : MonoBehaviour
 {
     public ShapeStorage shapeStorage;
     public int columns = 0;
     public int rows = 0;
-    public float squaresGap = 0.1f;
     public GameObject gridSquare;
-    public Vector2 startPosition = new Vector2(0.0f, 0.0f);
-    public float squareScale = 0.5f;
-    public float everySquareOffset = 0.0f;
+    public Vector2 startPosition = new(0f, 0f);
+    public float squareScale = .5f;
+    public float everySquareOffset = 0f;
+    public float squaresGap = .1f;
 
-    private Vector2 _offset = new Vector2(0.0f, 0.0f);
+    private Vector2 _offset = new(0f, 0f);
     private LineIndicator _lineIndicator;
-    private List<GameObject> _gridSquares = new List<GameObject>();
+    private List<GameObject> _gridSquares = new();
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -52,10 +48,10 @@ public class Grid : MonoBehaviour
             for (var column = 0; column < columns; ++column)
             {
                 _gridSquares.Add(Instantiate(gridSquare) as GameObject);
-                _gridSquares[_gridSquares.Count - 1].transform.SetParent(this.transform);
-                _gridSquares[_gridSquares.Count - 1].transform.localScale = new Vector3(squareScale, squareScale, 1);
-                _gridSquares[_gridSquares.Count - 1].GetComponent<GridSquare>().SetImage(_lineIndicator.GetGridSquareIndex(square_index) % 2 == 0);
-                _gridSquares[_gridSquares.Count - 1].GetComponent<GridSquare>().SquareIndex = square_index;
+                _gridSquares[^1].transform.SetParent(this.transform);
+                _gridSquares[^1].transform.localScale = new Vector3(squareScale, squareScale, 1);
+                _gridSquares[^1].GetComponent<GridSquare>().SetImage(_lineIndicator.GetGridSquareIndex(square_index) % 2 == 0);
+                _gridSquares[^1].GetComponent<GridSquare>().SquareIndex = square_index;
                 square_index++;
             }
         }
@@ -66,7 +62,7 @@ public class Grid : MonoBehaviour
     {
         int column_number = 0;
         int row_number = 0;
-        Vector2 square_gap_number = new Vector2(0.0f, 0.0f);
+        Vector2 square_gap_number = new(0f, 0f);
         bool row_moved = false;
 
         var square_rect = _gridSquares[0].GetComponent<RectTransform>();
@@ -81,9 +77,9 @@ public class Grid : MonoBehaviour
             {
                 square_gap_number.x = 0;
                 // go to next row
-                column_number=0;
+                column_number = 0;
                 row_number++;
-                row_moved=false;
+                row_moved = false;
             }
             var pos_x_offset = _offset.x * column_number + (square_gap_number.x * squaresGap);
             var pos_y_offset = _offset.y * row_number + (square_gap_number.y * squaresGap);
@@ -114,7 +110,7 @@ public class Grid : MonoBehaviour
         foreach (var square in _gridSquares)
         {
             var gridSquare = square.GetComponent<GridSquare>();
-            if (gridSquare.Selected && !gridSquare.SquareOccupied   )
+            if (gridSquare.Selected && !gridSquare.SquareOccupied)
             {
                 squareIndices.Add(gridSquare.SquareIndex);
                 gridSquare.Selected = false;
@@ -129,7 +125,6 @@ public class Grid : MonoBehaviour
             {
                 _gridSquares[i].GetComponent<GridSquare>().PlaceShapeOnBoard();
             }
-
             int shapeLeft = 0;
             foreach(Shape shape in shapeStorage.shapeList)
             {
@@ -137,7 +132,7 @@ public class Grid : MonoBehaviour
                     shapeLeft++;
             }
 
-            if(shapeLeft==0) {
+            if(shapeLeft == 0) {
                 GameEvents.RequestNewShapes();
             } else {
                 GameEvents.SetShapeInactive();
@@ -146,6 +141,7 @@ public class Grid : MonoBehaviour
             
         } else
         {
+            RevertShape.RemoveRevertData();
             GameEvents.MoveShapeToStartPosition();
         }
     }
@@ -153,7 +149,7 @@ public class Grid : MonoBehaviour
     // get all lines and squares data, clear completed ones, play animation, add score
     void CheckIfCompleted()
     {
-        List<int[]> clearData = new List<int[]>();
+        List<int[]> clearData = new();
 
         //rows
         foreach(var line in _lineIndicator.line_data){
@@ -170,20 +166,20 @@ public class Grid : MonoBehaviour
 
         int numCompleted = ClearAndGetCompleted(clearData);
 
-        if(numCompleted>2){
+        if(numCompleted > 2){
             //TODO
         }
 
-        int totalScore = 10*numCompleted;
+        int totalScore = 10 * numCompleted;
         GameEvents.AddScore(totalScore);
-        CheckIfPlayerLost();
+        CheckIfPlayerLost(GetShapeStorage());
     }
 
     // clear successful lines and squares, return the number of clear
     private int ClearAndGetCompleted(List<int[]> data)
     {
-        int numCompleted=0;
-        List<int[]> linesCompleted = new List<int[]>();
+        int numCompleted = 0;
+        List<int[]> linesCompleted = new();
 
         foreach(int[] line in data){
 
@@ -211,33 +207,40 @@ public class Grid : MonoBehaviour
         return numCompleted;
     }
 
-    private void CheckIfPlayerLost(){
+    private ShapeStorage GetShapeStorage()
+    {
+        return shapeStorage;
+    }
+
+    private void CheckIfPlayerLost(ShapeStorage shapeStorage)
+    {
         int validShapes = 0;
 
-        for(int index=0; index<shapeStorage.shapeList.Count; index++){
+        for(int index = 0; index < shapeStorage.shapeList.Count; index++){
             var isShapeActive = shapeStorage.shapeList[index].IsAnyOfSquareActive();
             if(CheckIfShapeCanBePlaced(shapeStorage.shapeList[index]) && isShapeActive){
-                shapeStorage.shapeList[index]?.ActivateShape();
+                shapeStorage.shapeList[index].ActivateShape();
                 validShapes++;
             }
         }
 
-        if(validShapes==0){
+        if(validShapes == 0){
             GameEvents.GameOver(false);
         }
     }
 
-    private bool CheckIfShapeCanBePlaced(Shape currentShape){
+    private bool CheckIfShapeCanBePlaced(Shape currentShape)
+    {
         var currentShapeData = currentShape.currentShapeData;
         var shapeCols = currentShapeData.columns;
         var shapeRows = currentShapeData.rows;
 
         // all indexes of filled squares
-        List<int> filledUpSquaresIndices = new List<int>();
+        List<int> filledUpSquaresIndices = new();
         var squareIndex = 0;
 
-        for(var row=0; row<shapeRows; row++){
-            for(var col=0; col<shapeCols; col++){
+        for(var row = 0; row < shapeRows; row++){
+            for(var col = 0; col < shapeCols; col++){
                 if(currentShapeData.board[row].column[col]){
                     filledUpSquaresIndices.Add(squareIndex);
                 }
@@ -278,8 +281,8 @@ public class Grid : MonoBehaviour
         while(lastRowIndex + (rows-1) < 9){
             var rowData = new List<int>();
 
-            for(int rowIndex=lastRowIndex; rowIndex<lastRowIndex+rows; rowIndex++){
-                for(int colIndex=lastColIndex; colIndex<lastColIndex+cols; colIndex++){
+            for(int rowIndex = lastRowIndex; rowIndex < lastRowIndex + rows; rowIndex++){
+                for(int colIndex = lastColIndex; colIndex < lastColIndex + cols; colIndex++){
                     rowData.Add(_lineIndicator.line_data[rowIndex][colIndex]);
                 }
             }
@@ -296,7 +299,6 @@ public class Grid : MonoBehaviour
                 break;
             }
         }
-
         return squareList;
     }
 }
