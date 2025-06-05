@@ -33,11 +33,13 @@ public class Shape : MonoBehaviour, IPointerClickHandler, IPointerUpHandler, IPo
     {
         GameEvents.MoveShapeToStartPosition += MoveShapeToStartPosition;
         GameEvents.SetShapeInactive += SetShapeInactive;
+        GameEvents.SetShapeActive += SetShapeActive;
     }
-    private void OnDisable() 
+    private void OnDisable()
     {
         GameEvents.MoveShapeToStartPosition -= MoveShapeToStartPosition;
         GameEvents.SetShapeInactive -= SetShapeInactive;
+        GameEvents.SetShapeActive -= SetShapeActive;
     }
 
     public bool IsOnStartPosition() //returns true if the shape is on the _startPosition
@@ -67,6 +69,13 @@ public class Shape : MonoBehaviour, IPointerClickHandler, IPointerUpHandler, IPo
                 square.SetActive(false);
             }
     }
+    public void SetShapeActive()
+    {
+        foreach (var square in _currentSquares)
+        {
+            square.SetActive(true);
+        }
+    }
     public void ActivateShape()
     {
         if(!_shapeActive)
@@ -82,13 +91,10 @@ public class Shape : MonoBehaviour, IPointerClickHandler, IPointerUpHandler, IPo
         _transform.localPosition = _startPosition;
         CreateShape(shapeData);
     }
-    public List<ShapeData> newShapeData;
     public void CreateShape(ShapeData shapeData)
     {
         currentShapeData = shapeData;
         TotalSquareNumber = GetNumberOfSquares(shapeData);
-        newShapeData.Add(shapeData);    //add the shape to the list to transfer to ShapeRevert
-        if (newShapeData.Count > 1) { newShapeData.Remove(newShapeData[0]); }
 
         while (_currentSquares.Count < TotalSquareNumber)
         {   //ensures enough squares are instantiated -> to represent the current shape
@@ -190,11 +196,9 @@ public class Shape : MonoBehaviour, IPointerClickHandler, IPointerUpHandler, IPo
             eventData.position, Camera.main, out Vector2 pos);  //convert the point -> local position
         _transform.localPosition = pos + offset; //move the UI to that pos (+ offset) -> not jump to pos
     }
-    public Grid grid;
     public void OnEndDrag(PointerEventData eventData)
     {
         GetComponent<RectTransform>().localScale = _shapeStartScale;    //change the shape scale
-        RevertShape.AddRevertData(currentShapeData);
         GameEvents.CheckIfShapeCanBePlaced();   //check if it can be placed down -> GameEvents.cs
     }
 }

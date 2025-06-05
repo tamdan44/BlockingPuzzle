@@ -1,8 +1,8 @@
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.EventSystems;
 public class Grid : MonoBehaviour
 {
+    public RevertShape revertShape;
     public ShapeStorage shapeStorage;
     public int columns = 0;
     public int rows = 0;
@@ -104,9 +104,11 @@ public class Grid : MonoBehaviour
     }
 
     // check if shape can be placed, if it can, place it on the grid, check and add scores
+    public List<int> squareIndices = new();
+
     private void CheckIfShapeCanBePlaced()
     {
-        var squareIndices = new List<int>();
+        squareIndices.Clear();
         foreach (var square in _gridSquares)
         {
             var gridSquare = square.GetComponent<GridSquare>();
@@ -118,13 +120,14 @@ public class Grid : MonoBehaviour
         }
         var currentSelectedShape = shapeStorage.GetCurrentSelectedShape();
         if (currentSelectedShape == null) return; //there's no selected shape
-
         if (currentSelectedShape.TotalSquareNumber == squareIndices.Count)
         {
-            foreach(int i in squareIndices)
+            foreach (int i in squareIndices)
             {
                 _gridSquares[i].GetComponent<GridSquare>().PlaceShapeOnBoard();
             }
+            revertShape.AddRevertValue(squareIndices);
+
             int shapeLeft = 0;
             foreach(Shape shape in shapeStorage.shapeList)
             {
@@ -141,7 +144,6 @@ public class Grid : MonoBehaviour
             
         } else
         {
-            RevertShape.RemoveRevertData();
             GameEvents.MoveShapeToStartPosition();
         }
     }
@@ -181,17 +183,17 @@ public class Grid : MonoBehaviour
         int numCompleted = 0;
         List<int[]> linesCompleted = new();
 
-        foreach(int[] line in data){
+        foreach(int[] line in data) {
 
             bool completed = true;
 
-            foreach(int i in line){
+            foreach(int i in line) {
                 var comp = _gridSquares[i].GetComponent<GridSquare>();
-                if(!comp.SquareOccupied){
+                if(!comp.SquareOccupied) {
                     completed = false;
                 }
             }
-            if(completed){
+            if(completed) {
                 numCompleted++;
                 linesCompleted.Add(line);
             }
@@ -216,14 +218,13 @@ public class Grid : MonoBehaviour
     {
         int validShapes = 0;
 
-        for(int index = 0; index < shapeStorage.shapeList.Count; index++){
+        for(int index = 0; index < shapeStorage.shapeList.Count; index++) {
             var isShapeActive = shapeStorage.shapeList[index].IsAnyOfSquareActive();
             if(CheckIfShapeCanBePlaced(shapeStorage.shapeList[index]) && isShapeActive){
                 shapeStorage.shapeList[index].ActivateShape();
                 validShapes++;
             }
         }
-
         if(validShapes == 0){
             GameEvents.GameOver(false);
         }
@@ -255,16 +256,16 @@ public class Grid : MonoBehaviour
         var squareList = GetAllSquaresCombinations(shapeRows, shapeCols);
         bool canBePlaced = false;
 
-        foreach(int[] number in squareList){
+        foreach(int[] number in squareList) {
             bool shapeCanBePlaced = true;
             foreach(int squareIndexToCheck in filledUpSquaresIndices){
                 var comp = _gridSquares[number[squareIndexToCheck]].GetComponent<GridSquare>();
-                if(comp.SquareOccupied){
+                if(comp.SquareOccupied) {
                     shapeCanBePlaced = false;
                 }
             }
 
-            if(shapeCanBePlaced){
+            if(shapeCanBePlaced) {
                 canBePlaced = true;
             }
         }
@@ -300,5 +301,27 @@ public class Grid : MonoBehaviour
             }
         }
         return squareList;
+    }
+    public int undoTimes;
+    public void Revert()
+    {
+        undoTimes -= 1;
+        if (undoTimes > 0)
+        {
+            
+            foreach (int i in revertShape.revertSquares[^1])
+            {
+                _gridSquares[i].GetComponent<GridSquare>().ClearOccupied();
+                _gridSquares[i].GetComponent<GridSquare>().Deactivate();
+                GameEvents.MoveShapeToStartPosition();
+                GameEvents.SetShapeActive();
+            }
+            revertShape.revertSquares.RemoveAt(revertShape.revertSquares.Count - 1);
+        }
+        if (undoTimes == 0)
+        {
+            Debug.Log("Cannot undo");
+            undoTimes = 0;
+        }
     }
 }

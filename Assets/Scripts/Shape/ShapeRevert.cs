@@ -1,31 +1,20 @@
 using System.Collections.Generic;
 using UnityEngine;
+using System;
 
 public class RevertShape : MonoBehaviour
 {
-    public static List<ShapeData> Revert = new();
+    public List<List<int>> revertSquares = new();
+    public List<int> newList = new();
 
-    public GridSquare gridSquare;
-    public Shape shape;
-    public static void RemoveRevertData()
+    public void AddRevertValue(List<int> squareIndex)
     {
-        Revert.Remove(Revert[^1]);
-    }
-    public static void AddRevertData(ShapeData shapeData)
-    {
-        Revert.Add(shapeData);
-        if (Revert.Count > 3 ) { Revert.Remove(Revert[0]); }
-    }
-    public void DoRevert()
-    {
-        gridSquare.Deactivate();
-    }
-    private void OnEnable()
-    {
-
-    }
-    private void OnDisable()
-    {
-
+        newList.Clear();
+        foreach (int i in squareIndex)
+        {
+            newList.Add(i);
+        }
+        revertSquares.Add(newList);
+        if (revertSquares.Count > 3) revertSquares.RemoveAt(0);
     }
 }

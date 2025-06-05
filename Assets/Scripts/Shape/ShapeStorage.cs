@@ -22,7 +22,7 @@ public class ShapeStorage : MonoBehaviour
     }
     public void RequestNewShapes()
     {
-        foreach (Shape shape in shapeList)
+        foreach (var shape in shapeList)
         {
             int shapeIndex = Random.Range(0, shapeDataList.Count);
             shape.RequestNewShape(shapeDataList[shapeIndex]);
