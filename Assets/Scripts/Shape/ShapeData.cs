@@ -35,7 +35,9 @@ public class ShapeData : ScriptableObject
 
     public int columns = 0;
     public int rows = 0;
-    public Row[] board;
+    public Row[] board; 
+
+    
 
     public void Clear()
     {

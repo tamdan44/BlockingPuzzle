@@ -27,15 +27,15 @@ public class Grid : MonoBehaviour
         CreateGrid();
     }
 
-    private void OnEnable()
-    {
-        GameEvents.CheckIfShapeCanBePlaced += CheckIfShapeCanBePlaced;
-    }
+        private void OnEnable()
+        {
+            GameEvents.CheckIfShapeCanBePlaced += CheckIfShapeCanBePlaced;
+        }
 
-    private void OnDisable()
-    {
-        GameEvents.CheckIfShapeCanBePlaced -= CheckIfShapeCanBePlaced;
-    }
+        private void OnDisable()
+        {
+            GameEvents.CheckIfShapeCanBePlaced -= CheckIfShapeCanBePlaced;
+        }
 
     private void CreateGrid()
     {
@@ -216,13 +216,19 @@ public class Grid : MonoBehaviour
 
         for(int index=0; index<shapeStorage.shapeList.Count; index++){
             var isShapeActive = shapeStorage.shapeList[index].IsAnyOfSquareActive();
-            if(CheckIfShapeCanBePlaced(shapeStorage.shapeList[index]) && isShapeActive){
-                shapeStorage.shapeList[index]?.ActivateShape();
-                validShapes++;
+            Debug.Log($"isShapeActive {isShapeActive}");
+            if(isShapeActive){
+                if (CheckIfShapeCanBePlaced(shapeStorage.shapeList[index]))
+                {
+                    shapeStorage.shapeList[index]?.ActivateShape();
+                    validShapes++;
+                    Debug.Log($"validShapes {validShapes}");
+                }
             }
         }
 
         if(validShapes==0){
+            Debug.Log("validShapes==0");
             GameEvents.GameOver(false);
         }
     }
@@ -250,11 +256,13 @@ public class Grid : MonoBehaviour
         }
 
         var squareList = GetAllSquaresCombinations(shapeRows, shapeCols);
+        Debug.Log($"squareList.Count {squareList.Count}");
         bool canBePlaced = false;
 
         foreach(int[] number in squareList){
             bool shapeCanBePlaced = true;
             foreach(int squareIndexToCheck in filledUpSquaresIndices){
+                // Debug.Log($"squareIndexToCheck {squareIndexToCheck}");
                 var comp = _gridSquares[number[squareIndexToCheck]].GetComponent<GridSquare>();
                 if(comp.SquareOccupied){
                     shapeCanBePlaced = false;
@@ -286,17 +294,25 @@ public class Grid : MonoBehaviour
 
             squareList.Add(rowData.ToArray());
             lastColIndex++;
-            if(lastColIndex + (columns-1) >= 9){
+            Debug.Log($"lastColIndex {lastColIndex}");
+            if (lastColIndex + (cols - 1) >= 9)
+            {
                 lastRowIndex++;
-                lastColIndex=0;
+                lastColIndex = 0;
+                Debug.Log($"lastRowIndex {lastRowIndex}");
             }
-
+            Debug.Log($"safeIndex {safeIndex}");
             safeIndex++;
-            if(safeIndex>100){
+            
+            if (safeIndex > 100)
+            {
                 break;
             }
         }
 
+
+        Debug.Log($"rows {rows}");
+        Debug.Log($"cols {cols}");
         return squareList;
     }
 }
