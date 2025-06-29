@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Data;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
@@ -34,6 +35,21 @@ public class Shape : MonoBehaviour, IPointerClickHandler, IPointerUpHandler, IPo
     void Start()
     {
         
+    }
+
+    public float[] GetCurrentShapeDataSquares()
+    {
+        float[,] shapeDataArr = new float[3,3];
+
+        for (int x = 0; x < currentShapeData.board.Length; x++)
+        {
+            for (int y = 0; y < currentShapeData.board[x].column.Length; y++)
+            {
+                shapeDataArr[x, y] = currentShapeData.board[x].column[y] ? 1f : 0f;
+            }
+        }
+
+        return shapeDataArr.Cast<float>().ToArray();
     }
 
     private void OnEnable()

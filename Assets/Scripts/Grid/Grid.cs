@@ -37,6 +37,19 @@ public class Grid : MonoBehaviour
             GameEvents.CheckIfShapeCanBePlaced -= CheckIfShapeCanBePlaced;
         }
 
+    public float[] GetActiveGridSquares()
+    {
+    float[] gridSquareArr = new float[_gridSquares.Count];
+
+    for (int i = 0; i < _gridSquares.Count; i++)
+    {
+        var gridSquare = _gridSquares[i].GetComponent<GridSquare>();
+        gridSquareArr[i] = (gridSquare != null && gridSquare.SquareOccupied) ? 0f : 1f;
+    }
+
+    return gridSquareArr;
+    }
+
     private void CreateGrid()
     {
         SpawnGridSquares();
@@ -107,6 +120,7 @@ public class Grid : MonoBehaviour
         }
     }
 
+
     // check if shape can be placed, if it can, place it on the grid, check and add scores
     private void CheckIfShapeCanBePlaced()
     {
@@ -114,7 +128,7 @@ public class Grid : MonoBehaviour
         foreach (var square in _gridSquares)
         {
             var gridSquare = square.GetComponent<GridSquare>();
-            if (gridSquare.Selected && !gridSquare.SquareOccupied   )
+            if (gridSquare.Selected && !gridSquare.SquareOccupied)
             {
                 squareIndices.Add(gridSquare.SquareIndex);
                 gridSquare.Selected = false;
@@ -125,26 +139,30 @@ public class Grid : MonoBehaviour
 
         if (currentSelectedShape.TotalSquareNumber == squareIndices.Count)
         {
-            foreach(int i in squareIndices)
+            foreach (int i in squareIndices)
             {
                 _gridSquares[i].GetComponent<GridSquare>().PlaceShapeOnBoard();
             }
 
             int shapeLeft = 0;
-            foreach(Shape shape in shapeStorage.shapeList)
+            foreach (Shape shape in shapeStorage.shapeList)
             {
-                if(shape.IsOnStartPosition() && shape.IsAnyOfSquareActive())
+                if (shape.IsOnStartPosition() && shape.IsAnyOfSquareActive())
                     shapeLeft++;
             }
 
-            if(shapeLeft==0) {
+            if (shapeLeft == 0)
+            {
                 GameEvents.RequestNewShapes();
-            } else {
+            }
+            else
+            {
                 GameEvents.SetShapeInactive();
             }
             CheckIfCompleted();
-            
-        } else
+
+        }
+        else
         {
             GameEvents.MoveShapeToStartPosition();
         }
