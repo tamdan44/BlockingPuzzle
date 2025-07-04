@@ -12,12 +12,11 @@ public class NewMonoBehaviourScript : Agent
         // float[81], 1 for active square, 0 for inactive
         sensor.AddObservation(grid.GetActiveGridSquares()); 
 
-        // float[9]*3 for each shape
+        // int*3 for each shape current data index
         foreach (Shape shape in shapeStorage.shapeList)
         {
-            sensor.AddObservation(shape.GetCurrentShapeDataSquares()); 
+            sensor.AddObservation(shape.shapeIndex); 
         }
-
     }
 
     public override void OnActionReceived(ActionBuffers actions)

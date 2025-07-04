@@ -27,6 +27,7 @@ public class ShapeStorage : MonoBehaviour
         {
             int shapeIndex = UnityEngine.Random.Range(0, shapeDataList.Count);
             shape.RequestNewShape(shapeDataList[shapeIndex]);
+            shape.shapeIndex = shapeIndex;
         }
 
     }

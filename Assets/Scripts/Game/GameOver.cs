@@ -20,12 +20,8 @@ public class GameOver : MonoBehaviour
         GameEvents.GameOver -= GameOverPopup;
     }
 
-    void GameOverPopup(bool highScore){
+    void GameOverPopup(bool highScoreText){
         gameOverPopup.SetActive(true);
-        if(highScore){
-            highScoreText.SetActive(true);
-        } else{
-            gameOverText.SetActive(true);
-        }
+        gameOverText.SetActive(true);
     }
 }

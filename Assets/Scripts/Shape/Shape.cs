@@ -13,7 +13,8 @@ public class Shape : MonoBehaviour, IPointerClickHandler, IPointerUpHandler, IPo
     public Vector2 offset = new Vector2(0f, 700f);
 
     [HideInInspector]
-    public int TotalSquareNumber {get; set;}
+    public int shapeIndex {get; set;}
+    public int TotalSquareNumber { get; set; }
     public ShapeData currentShapeData;
     private List<GameObject> _currentSquares = new List<GameObject>();
     private Vector3 _shapeStartScale;
