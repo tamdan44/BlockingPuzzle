@@ -8,6 +8,7 @@ using UnityEngine.Scripting.APIUpdating;
 public class Grid : MonoBehaviour
 {
     public ShapeStorage shapeStorage;
+    public bool isGameOver;
     public int columns = 0;
     public int rows = 0;
     public float squaresGap = 0.1f;
@@ -20,22 +21,24 @@ public class Grid : MonoBehaviour
     private LineIndicator _lineIndicator;
     private List<GameObject> _gridSquares = new List<GameObject>();
 
+
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
         _lineIndicator = GetComponent<LineIndicator>();
+        isGameOver = false;
         CreateGrid();
     }
 
-        private void OnEnable()
-        {
-            GameEvents.CheckIfShapeCanBePlaced += CheckIfShapeCanBePlaced;
-        }
+    private void OnEnable()
+    {
+        GameEvents.CheckIfShapeCanBePlaced += CheckIfShapeCanBePlaced;
+    }
 
-        private void OnDisable()
-        {
-            GameEvents.CheckIfShapeCanBePlaced -= CheckIfShapeCanBePlaced;
-        }
+    private void OnDisable()
+    {
+        GameEvents.CheckIfShapeCanBePlaced -= CheckIfShapeCanBePlaced;
+    }
 
     public float[] GetActiveGridSquares()
     {
@@ -54,6 +57,19 @@ public class Grid : MonoBehaviour
     {
         SpawnGridSquares();
         SetGridSquaresPositions();
+    }
+
+    public void ClearGrid()
+    {
+        isGameOver = false;
+        GameEvents.RequestNewShapes();
+        foreach (var square in _gridSquares)
+        {
+            var gridSquare = square.GetComponent<GridSquare>();
+            gridSquare.ClearOccupied();
+            gridSquare.Deactivate();
+        }
+        GameEvents.ResetScore();
     }
 
     private void SpawnGridSquares()
@@ -124,6 +140,7 @@ public class Grid : MonoBehaviour
     // check if shape can be placed, if it can, place it on the grid, check and add scores
     private void CheckIfShapeCanBePlaced()
     {
+        // get square indices that are selected and not occupied
         var squareIndices = new List<int>();
         foreach (var square in _gridSquares)
         {
@@ -139,6 +156,7 @@ public class Grid : MonoBehaviour
 
         if (currentSelectedShape.TotalSquareNumber == squareIndices.Count)
         {
+            //loop each grid square index and make them occupied (green)
             foreach (int i in squareIndices)
             {
                 _gridSquares[i].GetComponent<GridSquare>().PlaceShapeOnBoard();
@@ -159,7 +177,7 @@ public class Grid : MonoBehaviour
             {
                 GameEvents.SetShapeInactive();
             }
-            CheckIfCompleted();
+            CheckIfCompleted(); // get all lines and squares data, clear completed ones, play animation, add score
 
         }
         else
@@ -245,9 +263,11 @@ public class Grid : MonoBehaviour
             }
         }
 
-        if(validShapes==0){
+        if (validShapes == 0)
+        {
             Debug.Log("validShapes==0");
             GameEvents.GameOver(false);
+            isGameOver = true;
         }
     }
 

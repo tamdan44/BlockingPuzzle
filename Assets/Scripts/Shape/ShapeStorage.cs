@@ -29,7 +29,6 @@ public class ShapeStorage : MonoBehaviour
             shape.RequestNewShape(shapeDataList[shapeIndex]);
             shape.shapeIndex = shapeIndex;
         }
-
     }
 
     public Shape GetCurrentSelectedShape()

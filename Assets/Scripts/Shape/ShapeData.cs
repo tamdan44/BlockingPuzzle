@@ -1,4 +1,5 @@
 using Unity.Mathematics;
+using Unity.MLAgents.Integrations.Match3;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -35,7 +36,7 @@ public class ShapeData : ScriptableObject
 
     public int columns = 0;
     public int rows = 0;
-    public Row[] board; 
+    public Row[] board;
 
     
 
