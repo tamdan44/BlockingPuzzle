@@ -6,9 +6,13 @@ public class ShapeStorage : MonoBehaviour
 {
     public List<ShapeData> shapeDataList;
     public List<Shape> shapeList;
+
+    // ✅ Biến để lưu shape đang được chọn
+    public Shape currentSelectedShape;
+
     void Start()
     {
-        GameEvents.RequestNewShapes();
+        GameEvents.RequestNewShapes?.Invoke();
     }
 
     void OnEnable()
@@ -29,17 +33,30 @@ public class ShapeStorage : MonoBehaviour
             shape.RequestNewShape(shapeDataList[shapeIndex]);
             shape.shapeIndex = shapeIndex;
         }
+
+        // Reset lựa chọn khi tạo shape mới
+        currentSelectedShape = null;
     }
 
     public Shape GetCurrentSelectedShape()
     {
+        if (currentSelectedShape != null)
+            return currentSelectedShape;
+
         foreach (var shape in shapeList)
         {
-            if(!shape.IsOnStartPosition() && shape.IsAnyOfSquareActive())
+            if (!shape.IsOnStartPosition() && shape.IsAnyOfSquareActive())
                 return shape;
         }
 
         Debug.LogError("There is no shape selected!");
         return null;
+    }
+
+    // ✅ Hàm cho AI chọn shape cụ thể
+    public void SetCurrentSelectedShape(Shape shape)
+    {
+        currentSelectedShape = shape;
+        Debug.Log("✅ Shape đã được AI chọn: " + shape.name);
     }
 }
