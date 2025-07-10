@@ -210,7 +210,10 @@ TextureImporter:
     secondaryTextures: []
     spriteCustomMetadata:
       entries: []
-    nameFileIdTable: {}
+    nameFileIdTable:
+      You Rock_0: 5925300782715926724
+      You Rock_1: -2411920456584763111
+      You Rock_2: 4612395685362298847
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

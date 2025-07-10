@@ -8,6 +8,7 @@ using UnityEngine.Scripting.APIUpdating;
 public class Grid : MonoBehaviour
 {
     public ShapeStorage shapeStorage;
+    public bool isGameOver;
     public int columns = 0;
     public int rows = 0;
     public float squaresGap = 0.1f;
@@ -27,33 +28,64 @@ public class Grid : MonoBehaviour
         CreateGrid();
     }
 
-        private void OnEnable()
-        {
-            GameEvents.CheckIfShapeCanBePlaced += CheckIfShapeCanBePlaced;
-        }
-
-        private void OnDisable()
-        {
-            GameEvents.CheckIfShapeCanBePlaced -= CheckIfShapeCanBePlaced;
-        }
-
-    public float[] GetActiveGridSquares()
+    private void OnEnable()
     {
-    float[] gridSquareArr = new float[_gridSquares.Count];
-
-    for (int i = 0; i < _gridSquares.Count; i++)
-    {
-        var gridSquare = _gridSquares[i].GetComponent<GridSquare>();
-        gridSquareArr[i] = (gridSquare != null && gridSquare.SquareOccupied) ? 0f : 1f;
+        GameEvents.CheckIfShapeCanBePlaced += CheckIfShapeCanBePlaced;
     }
 
-    return gridSquareArr;
+    private void OnDisable()
+    {
+        GameEvents.CheckIfShapeCanBePlaced -= CheckIfShapeCanBePlaced;
     }
 
     private void CreateGrid()
     {
         SpawnGridSquares();
         SetGridSquaresPositions();
+    }
+
+    public void ClearGrid()
+    {
+        isGameOver = false;
+        
+        // Ensure grid is initialized before trying to clear it
+        if (_gridSquares == null || _gridSquares.Count == 0)
+        {
+            // Debug.LogWarning("Grid not initialized, creating grid first");
+            CreateGrid();
+        }
+        
+        // Safely invoke RequestNewShapes event
+        try
+        {
+            GameEvents.RequestNewShapes?.Invoke();
+        }
+        catch (System.Exception ex)
+        {
+            // Debug.LogWarning($"Error invoking RequestNewShapes event: {ex.Message}");
+        }
+        foreach (var square in _gridSquares)
+        {
+            if (square != null)
+            {
+                var gridSquare = square.GetComponent<GridSquare>();
+                if (gridSquare != null)
+                {
+                    gridSquare.ClearOccupied();
+                    gridSquare.Deactivate();
+                }
+            }
+        }
+        
+        // Safely invoke ResetScore event
+        try
+        {
+            GameEvents.ResetScore?.Invoke();
+        }
+        catch (System.Exception ex)
+        {
+            // Debug.LogWarning($"Error invoking ResetScore event: {ex.Message}");
+        }
     }
 
     private void SpawnGridSquares()
@@ -234,19 +266,19 @@ public class Grid : MonoBehaviour
 
         for(int index=0; index<shapeStorage.shapeList.Count; index++){
             var isShapeActive = shapeStorage.shapeList[index].IsAnyOfSquareActive();
-            Debug.Log($"isShapeActive {isShapeActive}");
+            // Debug.Log($"isShapeActive {isShapeActive}");
             if(isShapeActive){
                 if (CheckIfShapeCanBePlaced(shapeStorage.shapeList[index]))
                 {
                     shapeStorage.shapeList[index]?.ActivateShape();
                     validShapes++;
-                    Debug.Log($"validShapes {validShapes}");
+                    // Debug.Log($"validShapes {validShapes}");
                 }
             }
         }
 
         if(validShapes==0){
-            Debug.Log("validShapes==0");
+            // Debug.Log("validShapes==0");
             GameEvents.GameOver(false);
         }
     }
@@ -270,11 +302,11 @@ public class Grid : MonoBehaviour
         }
 
         if(currentShape.TotalSquareNumber != filledUpSquaresIndices.Count){
-            Debug.LogError("Number of filled up shape are not the same");
+            // Debug.LogError("Number of filled up shape are not the same");
         }
 
         var squareList = GetAllSquaresCombinations(shapeRows, shapeCols);
-        Debug.Log($"squareList.Count {squareList.Count}");
+        // Debug.Log($"squareList.Count {squareList.Count}");
         bool canBePlaced = false;
 
         foreach(int[] number in squareList){
@@ -312,14 +344,14 @@ public class Grid : MonoBehaviour
 
             squareList.Add(rowData.ToArray());
             lastColIndex++;
-            Debug.Log($"lastColIndex {lastColIndex}");
+            // Debug.Log($"lastColIndex {lastColIndex}");
             if (lastColIndex + (cols - 1) >= 9)
             {
                 lastRowIndex++;
                 lastColIndex = 0;
-                Debug.Log($"lastRowIndex {lastRowIndex}");
+                // Debug.Log($"lastRowIndex {lastRowIndex}");
             }
-            Debug.Log($"safeIndex {safeIndex}");
+            // Debug.Log($"safeIndex {safeIndex}");
             safeIndex++;
             
             if (safeIndex > 100)
@@ -329,8 +361,8 @@ public class Grid : MonoBehaviour
         }
 
 
-        Debug.Log($"rows {rows}");
-        Debug.Log($"cols {cols}");
+        // Debug.Log($"rows {rows}");
+        // Debug.Log($"cols {cols}");
         return squareList;
     }
 }

@@ -8,6 +8,12 @@ public class ShapeStorage : MonoBehaviour
     public List<Shape> shapeList;
     void Start()
     {
+        Debug.Log($"[ShapeStorage] Starting with {shapeList.Count} shapes in list");
+        for (int i = 0; i < shapeList.Count; i++)
+        {
+            Debug.Log($"[ShapeStorage] Shape {i}: {(shapeList[i] != null ? shapeList[i].name : "NULL")}");
+        }
+        
         GameEvents.RequestNewShapes();
     }
 
@@ -23,13 +29,22 @@ public class ShapeStorage : MonoBehaviour
 
     public void RequestNewShapes()
     {
+        Debug.Log($"[ShapeStorage] RequestNewShapes called for {shapeList.Count} shapes");
+        
         foreach (Shape shape in shapeList)
         {
-            int shapeIndex = UnityEngine.Random.Range(0, shapeDataList.Count);
-            shape.RequestNewShape(shapeDataList[shapeIndex]);
-            shape.shapeIndex = shapeIndex;
+            if (shape != null)
+            {
+                int shapeIndex = UnityEngine.Random.Range(0, shapeDataList.Count);
+                shape.RequestNewShape(shapeDataList[shapeIndex]);
+                shape.shapeIndex = shapeIndex;
+                Debug.Log($"[ShapeStorage] Assigned ShapeData {shapeIndex} ({shapeDataList[shapeIndex].name}) to shape {shape.name}");
+            }
+            else
+            {
+                Debug.LogError("[ShapeStorage] Found null shape in shapeList!");
+            }
         }
-
     }
 
     public Shape GetCurrentSelectedShape()

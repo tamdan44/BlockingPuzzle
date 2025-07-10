@@ -19,7 +19,6 @@ public class Shape : MonoBehaviour, IPointerClickHandler, IPointerUpHandler, IPo
     private List<GameObject> _currentSquares = new List<GameObject>();
     private Vector3 _shapeStartScale;
     private RectTransform _transform;
-    private bool _shapeDraggable = true;
     private Canvas _canvas;
     private Vector3 _startPosition;
     private bool _shapeActive = true;
@@ -29,28 +28,12 @@ public class Shape : MonoBehaviour, IPointerClickHandler, IPointerUpHandler, IPo
         _shapeStartScale = this.GetComponent<RectTransform>().localScale;
         _transform = this.GetComponent<RectTransform>();
         _canvas = GetComponentInParent<Canvas>();
-        _shapeDraggable = true;
         _startPosition =_transform.localPosition;
     }
 
     void Start()
     {
         
-    }
-
-    public float[] GetCurrentShapeDataSquares()
-    {
-        float[,] shapeDataArr = new float[3,3];
-
-        for (int x = 0; x < currentShapeData.board.Length; x++)
-        {
-            for (int y = 0; y < currentShapeData.board[x].column.Length; y++)
-            {
-                shapeDataArr[x, y] = currentShapeData.board[x].column[y] ? 1f : 0f;
-            }
-        }
-
-        return shapeDataArr.Cast<float>().ToArray();
     }
 
     private void OnEnable()
@@ -105,13 +88,18 @@ public class Shape : MonoBehaviour, IPointerClickHandler, IPointerUpHandler, IPo
 
     public void RequestNewShape(ShapeData shapeData)
     {
+        // Debug.Log($"[Shape] {name} - RequestNewShape called with ShapeData: {shapeData.name}");
         _transform.localPosition = _startPosition;
         CreateShape(shapeData);
     }
     public void CreateShape(ShapeData shapeData)
     {
+        // Debug.Log($"[Shape] {name} - CreateShape called with {shapeData.name} ({shapeData.rows}x{shapeData.columns})");
+        
         currentShapeData = shapeData;
         TotalSquareNumber = GetNumberOfSquares(shapeData);
+        
+        // Debug.Log($"[Shape] {name} - Total squares needed: {TotalSquareNumber}");
 
         while (_currentSquares.Count <= TotalSquareNumber)
         {
@@ -141,6 +129,8 @@ public class Shape : MonoBehaviour, IPointerClickHandler, IPointerUpHandler, IPo
                 }
             }
         }
+        
+        // Debug.Log($"[Shape] {name} - Shape created successfully with {currentIndexInList} active squares");
     }
     private float GetXPositionForShapeSquare(ShapeData shapeData, int column, Vector2 moveDistance)
     {
