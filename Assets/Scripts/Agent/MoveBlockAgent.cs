@@ -217,6 +217,8 @@ public class MoveBlockAgent : Agent
             shape.OnDrag(pointerEventData);
 
             // Wait a frame before ending drag
+            // Tăng thời gian delay giữa lúc block đã tới nơi và thả
+            yield return new WaitForSeconds(2.5f);
             yield return new WaitForFixedUpdate();
 
             // Step 4: Manually select grid squares that shape should occupy
@@ -240,7 +242,7 @@ public class MoveBlockAgent : Agent
             // Step 5: End drag (this triggers placement logic)
             shape.OnEndDrag(pointerEventData);
             // Đợi thêm một chút để đảm bảo block được đặt thành công
-            yield return new WaitForSeconds(0.15f);
+            yield return new WaitForSeconds(1f);
             // Wait for placement to be processed
             yield return new WaitForFixedUpdate();
             yield return new WaitForFixedUpdate();
@@ -488,22 +490,23 @@ public class MoveBlockAgent : Agent
         // Check if shape fits and select squares
         List<int> squaresToSelect = new List<int>();
         
+        // Đảo lại shapeRow để kiểm tra nếu shape bị lật dọc khi đặt
         for (int shapeRow = 0; shapeRow < shapeData.rows; shapeRow++)
         {
             for (int shapeCol = 0; shapeCol < shapeData.columns; shapeCol++)
             {
-                if (shapeData.board[shapeRow].column[shapeCol])
+                // Đảo chiều cột để khớp với UI render (fix lật trái-phải)
+                int realRow = shapeRow;
+                int realCol = shapeData.columns - 1 - shapeCol;
+                if (shapeData.board[realRow].column[realCol])
                 {
-                    // Calculate grid position for this shape square
                     int gridRow = targetRow + shapeRow;
                     int gridCol = targetCol + shapeCol;
                     int gridIndex = gridRow * 9 + gridCol;
-                    // Check bounds
                     if (gridRow >= 9 || gridCol >= 9 || gridIndex >= 81)
                     {
                         return false;
                     }
-                    // Check if square is already occupied
                     var gridSquareComponent = gridSquares[gridIndex].GetComponent<GridSquare>();
                     if (gridSquareComponent.SquareOccupied)
                     {
