@@ -3,7 +3,7 @@ using UnityEngine;
 
 public class LineIndicator : MonoBehaviour
 {
-    public List<int[]> line_data = new List<int[]>
+    public List<int[]> line_data = new()
     {
         new int[] {  0,  1,  2,  3,  4,  5,  6,  7,  8 },
         new int[] {  9, 10, 11, 12, 13, 14, 15, 16, 17 },
@@ -19,7 +19,7 @@ public class LineIndicator : MonoBehaviour
     };
 
 
-    public List<int[]> square_data = new List<int[]>
+    public List<int[]> square_data = new()
     {
         new int[] {  0,  1,  2,  9, 10, 11, 18, 19, 20 }, // Top-left square
         new int[] {  3,  4,  5, 12, 13, 14, 21, 22, 23 }, // Top-middle square
@@ -41,9 +41,10 @@ public class LineIndicator : MonoBehaviour
         int pos_row = -1;
         int pos_col = -1;
 
-        if(square_index<=80&&square_index>=0){
-            pos_row = square_index/9;
-            pos_col = square_index%9;
+        if (square_index <= 80 && square_index >= 0)
+        {
+            pos_row = square_index / 9;
+            pos_col = square_index % 9;
         }
         
         return (pos_row, pos_col);
@@ -54,11 +55,11 @@ public class LineIndicator : MonoBehaviour
         int[] line = new int[9];
         int col = GetGridSquarePos(square_index).Item2;
 
-        for(int i=0; i<9; i++) {
+        for(int i = 0; i < 9; i++) 
+        {
             line[i] = col;
-            col+=9;
+            col += 9;
         }
-
         return line;
     }
 
@@ -76,5 +77,4 @@ public class LineIndicator : MonoBehaviour
         }
         return -1;
     }
-
 }
